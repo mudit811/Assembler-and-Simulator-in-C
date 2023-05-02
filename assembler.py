@@ -7,7 +7,7 @@ var_dec_perm, input_ovrflw_error=1,0
 if num_int>128:
     intovrflw_error=1
 while i<num_int:
-    if ass_int[i]=='':          #for removing blank lines if any. It isn't working properly, anyone fix it.
+    if ass_int[i]=='\n':         
         x=ass_int.pop(i)
         num_int-=1
     else:
