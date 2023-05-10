@@ -1,11 +1,7 @@
 ins={"add":"00000","sub":"00001","mov":"00010","mov_":"00011","ld":"00100","st":"00101","mul":"00110","div":"00111","rs":"01000","ls":"01001","xor":"01010","or":"01011","and":"01100","not":"01101","cmp":"01110","jmp":"01111","jlt":"11100","jgt":"11101","je":"11111","hlt":"11010"}
 reg={"R0":"000","R1":"001","R2":"010","R3":"011","R4":"100","R5":"101","R6":"110","FLAGS":"111"}
 ins_type={"add":1,"sub":1,"mov":2,"mov_":3,"ld":4,"st":4,"mul":1,"div":3,"rs":2,"ls":2,"xor":1,"or":1,"and":1,"not":3,"cmp":3,"jmp":5,"jlt":5,"jgt":5,"je":5,"hlt":6}
-var_dic={}
-label_dic={}
 var_dec_perm, var_dec_error, input_ovrflw_error, imm_ovrflw_error = 1,0,0,0
-
-
 
 def convert_A(s):
    global reg
