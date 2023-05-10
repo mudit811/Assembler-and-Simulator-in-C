@@ -22,9 +22,6 @@ def convert_B(s):
         imm="0"*(7-len(imm))+imm
         x=f"{ins[s[0]]}0{reg[s[1]]}{imm}"
         return(x)
-    else:
-        imm_ovrflw_error=1
-        return("Overflow Error: Imm Value Exceeds 7 bits")
 
 def convert_C(s):
     global reg
@@ -62,7 +59,6 @@ def func_call(s):
 f=open("stdin.txt","r")
 data=f.readlines()
 data=[i.split(" ") for i in data if i!=""]
-#data=data[1:]
 for i in range(len(data)):
     if i!=len(data)-1:
         data[i][-1]=data[i][-1][:-1]
@@ -88,10 +84,6 @@ for i in range(len(data)):
 for i in range(len(data)):
     if data[i][0][-1]==":":
         data[i]=data[i][1:]
-
-print(data)
-print(var_dic)
-print(label_dic)
 
 for i in data:
     if (i[0]!="var"):
