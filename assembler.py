@@ -61,7 +61,7 @@ def func_call(s):
         else:
             t=3
     x=func_dic[t](s)
-    return(s)
+    return(x)
 
 stdin=open("stdin.txt", "r")
 ass_int=stdin.readlines()
