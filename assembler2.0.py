@@ -5,29 +5,26 @@ f=open("assembler_code.txt","r")
 data=f.readlines()
 
 data=[i.split(" ") for i in data if i!=""]
-data=data[1:];flag=True
-if data[-1][-1]!="hlt":
-    flag=False
-if len(data)>127:
-    flag=False
+data=data[1:]
 for i in range(len(data)):
     data[i][-1]=data[i][-1][:-1]
-d1={};count_=len(data)+1 # storing variable in the dictionary
+var_dic={};count_=len(data)+1 # storing variable in the dictionary
 for i in data:
     if i[0]=="var":
-        if count_>127:
-            flag=False
         t=bin(count_)[2:]
-    
         t="0"*(7-len(t))+t
-        d1[i[1]]=t
-        count_+=1
-d2={}#storing labels in the dictionary
+        var_dic[i[1]]=t
+label_dic={}#storing labels in the dictionary
 for i in range(len(data)):
     if data[i][0][-1]==":":
         t=bin(i+1)[2:]
         t="0"*(7-len(t))+t
-        d2[data[i][0]]=t
+        label_dic[data[i][0]]=t
+for i in range(len(data)):
+    if data[i][0][-1]==":":
+        data[i]=data[i][1:]
+
+print(data)
+print(var_dic)
+print(label_dic)
 f.close() 
-
-
