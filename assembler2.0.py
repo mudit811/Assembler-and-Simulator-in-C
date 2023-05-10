@@ -82,8 +82,5 @@ def immediate(data):
     else:
         print("Immediate value greater than 7 bit")
         return flag
-    
-
-
-f.close() 
+ f.close() 
 
