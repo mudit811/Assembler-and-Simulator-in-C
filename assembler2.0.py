@@ -3,7 +3,7 @@ d={"add":"00000","sub":"00001","mov":"00010","mov_":"00011","ld":"00100","st":"0
 d_={"R1":"000","R2":"001","R3":"010","R4":"011","R5":"100","R6":"101","R7":"110","FlAGS":"111"}
 f=open("assembler_code.txt","r")
 data=f.readlines()
-f.close()
+
 data=[i.split(" ") for i in data if i!=""]
 data=data[1:];flag=True
 if data[-1][-1]!="hlt":
@@ -17,9 +17,17 @@ for i in data:
     if i[0]=="var":
         if count_>127:
             flag=False
-        d1[i[1]]=bin(count_)[2:]
+        t=bin(count_)[2:]
+    
+        t="0"*(7-len(t))+t
+        d1[i[1]]=t
         count_+=1
 d2={}#storing labels in the dictionary
 for i in range(len(data)):
     if data[i][0][-1]==":":
-        d2[data[i][0]]=bin(i)[2:]
+        t=bin(i+1)[2:]
+        t="0"*(7-len(t))+t
+        d2[data[i][0]]=t
+f.close() 
+
+
