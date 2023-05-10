@@ -7,7 +7,9 @@ data=f.readlines()
 data=[i.split(" ") for i in data if i!=""]
 data=data[1:]
 for i in range(len(data)):
-    data[i][-1]=data[i][-1][:-1]
+    if i!=len(data)-1:
+        data[i][-1]=data[i][-1][:-1]
+        
 var_dic={};count_=len(data)+1 # storing variable in the dictionary
 for i in data:
     if i[0]=="var":
@@ -28,3 +30,4 @@ print(data)
 print(var_dic)
 print(label_dic)
 f.close() 
+
