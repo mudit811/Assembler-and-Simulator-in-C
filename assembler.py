@@ -4,7 +4,7 @@ ins_type={"add":1,"sub":1,"mov":2,"mov_":3,"ld":4,"st":4,"mul":1,"div":3,"rs":2,
 var_dic={}
 label_dic={}
 var_dec_perm, var_dec_error, input_ovrflw_error, imm_ovrflw_error = 1,0,0,0
-func_dic={1: convert_A, 2: convert_B, 3: convert_C, 4: convert_D, 5: convert_E, 6: convert_F}
+
 
 
 def convert_A(s):
@@ -51,7 +51,7 @@ def convert_F(s):
     global ins
     x=f"{ins[s[0]]}00000000000"
     return(x)
-
+func_dic={1: convert_A, 2: convert_B, 3: convert_C, 4: convert_D, 5: convert_E, 6: convert_F}
 def func_call(s):
     t=ins_type[s[0]]
     x=func_dic[t](s)
