@@ -32,7 +32,7 @@ f.close()
 def typos(data,d):
     flag=True
     for i in range(len(data)):
-        if data[i][0] not in d:
+        if data[i][0] not in d:     #if data[i][0] not in d and data[i][0]!="var": this should be the condition I think, otherwise it's raising an error at line 0
             line=i
             flag=False  
             break
