@@ -6,7 +6,6 @@ label_dic={}
 var_dec_perm, var_dec_error, input_ovrflw_error, imm_ovrflw_error = 1,0,0,0
 func_dic={1: convert_A, 2: convert_B, 3: convert_C, 4: convert_D, 5: convert_E, 6: convert_F}
 
-#add filler bits to each type
 
 def convert_A(s):
    global reg
@@ -33,7 +32,7 @@ def convert_C(s):
     x= f"{ins[s[0]]}00000{reg[s[1]]}{reg[s[2]]}"
     return(x)
 
-def convert_D(s):   #incomplete        #memory address allocation to variables not done yet
+def convert_D(s):  
     global reg
     global ins
     global var_dic
@@ -41,7 +40,7 @@ def convert_D(s):   #incomplete        #memory address allocation to variables n
     return(x)
     
 
-def convert_E(s):   #incomplete        #memory address allocation to variables not done yet
+def convert_E(s):   
     global reg
     global ins
     global label_dic
