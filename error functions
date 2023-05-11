@@ -1,0 +1,181 @@
+from sys import exit
+d={"add":"00000","sub":"00001","mov":"00010","mov_":"00011","ld":"00100","st":"00101","mul":"00110","div":"00111","rs":"01000","ls":"01001","xor":"01010","or":"01011","and":"01100","not":"01101","cmp":"01110","jmp":"01111","jlt":"11100","jgt":"11101","je":"11111","hlt":"11010"}
+d_={"R1":"000","R2":"001","R3":"010","R4":"011","R5":"100","R6":"101","R7":"110","FLAGS":"111"}
+l=list(d.keys())+["var"]
+jump_lst=["jmp","jlt","jgt","je"]
+f=open("sample.txt","r")
+data=f.readlines()
+data=[i.split(" ") for i in data if i!=""]
+
+for i in range(len(data)):
+    if i!=len(data)-1:
+     data[i][-1]=data[i][-1][:-1]
+var_dic={};count_=len(data)+1
+                                              #storing variable in the dictionary
+for i in data:
+    if i[0]=="var":
+        t=bin(count_)[2:]
+        t="0"*(7-len(t))+t
+        var_dic[i[1]]=t
+label_dic={}                                  #storing labels in the dictionary
+for i in range(len(data)):
+    if data[i][0][-1]==":":
+        t=bin(i+1)[2:]
+        t="0"*(7-len(t))+t
+        label_dic[data[i][0][:-1]]=t
+for i in range(len(data)):
+    if data[i][0][-1]==":":
+        data[i]=data[i][1:]
+print(data)
+print(var_dic)
+print(label_dic)
+f.close() 
+
+
+f=open("stdout.txt","w")
+print(data)
+# For all the error generator functions a return of False, indicates an error and True indicates there is no error.
+def typo_opcode(data):
+    flag=True
+    for i in range(len(data)):
+        if data[i][0] not in l:
+            line=i
+            flag=False  
+            break
+    if flag:
+        return True   
+    else:
+        f.write(f"Syntax Error: Operation code not correct; Error at line: {i}\n")
+        return False
+
+# def typo_reg(data):
+#     flag=True
+#     for i in range(len(data)):
+#         if data[i][0] in ["add","sub","mul","xor","or","and"]:
+#             if data[i][1] not in d_ and data[i][2] not in d_ and data[i][3] not in d_:
+#                 flag=False
+#                 f.write(f"Syntax Error: Register name not correct; Error at  line {i}\n")
+#                 break
+#         elif data[i][0] in ["mov",""]
+
+
+def hlt_end(data):
+    if data[-1][-1]=="hlt":
+        return True
+    else:
+        f.write(f"hlt not found at the end\n")
+        return False
+    
+def hlt_not_found(data):
+    flag=True
+    for i in data:
+        for j in i:
+            if j=="hlt":
+                flag=True
+            break
+    if flag:
+        return True
+        
+    else:
+        f.write(f"No halt instruction found\n")
+        return False
+    
+def immediate(data):
+    flag=True
+    for i in range(len(data)):
+        for j in range(len(data[i])):
+            if data[i][j][0]=="$":
+                z=len(bin(data[i][j][1:])[2:])
+                if z>7:
+                    line=i
+                    flag=False
+                    break
+        if flag==False:
+            break
+    if flag:
+        return True
+    else:
+        f.write(f"Error at line {i} :Immediate value greater than 7 bit")
+        return False
+
+def var_found_in_btw_error(data):
+    flag=True;count_=0
+    for i in range(len(data)):
+        if count_==0:
+            if data[i][0]!="var":
+                count_+=1
+        if count_==1:
+            if data[i][0]=="var":
+                flag=False
+                break
+    if flag:
+        return flag
+    else:
+        f.write(f"Variable found in between:Error at line {i}")
+        return flag
+
+def label_dec_error(data):
+    flag=True
+    for i in range(len(data)):
+        if data[i][0] in jump_lst:
+            j=data[i][1]
+            if j not in label_dic:
+                undec=j
+                line=i
+                flag=False
+                break
+    if flag:
+        return True
+    else:
+        f.write(f"Undefined label {undec}: Error at line {i}")
+        return False
+    
+
+def var_dec_error(data):
+    flag=True
+    for i in range(len(data)):
+        if data[i][0] in ["ld","st"]:
+                j=data[i][2]
+                if j not in var_dic:
+                        undec=j
+                        line=i
+                        flag=False
+                        break
+    if flag:
+        return True
+    else:
+        print(f"Undefined variable {undec}: Error at line:",i)
+        return False
+
+
+def misuse_labels_n_var(data):
+    flag=True
+    for i in range(len(data)):
+        if data[i][0] in jump_lst and data[i][1] in var_dic:
+            flag=False
+            print("Using variable instead of label: Error at line:",i)
+        
+        if data[i][0] in ["ld","st"] and data[i][2] in label_dic:
+            flag=False
+            print("Using label instead of variable: Error at line:",i)
+    return flag
+
+def flag_reg_misuse(data):
+    flag=True
+    for i in range(len(data)):
+        if data[i][0]!="mov" and "FLAGS" in data[i]:
+            flag=False
+            print(f"{data[i][0]} operation cannot have FLAGS in the instruction: Error at line",i)
+            break
+    return flag
+
+
+def ERRORS():
+    isERRORfree=typo_opcode(data) and hlt_end(data) and hlt_not_found(data) and immediate(data) and var_found_in_btw_error(data) and label_dec_error(data) and var_dec_error(data) and misuse_labels_n_var(data) and flag_reg_misuse(data)
+
+
+ERRORS()
+
+
+
+
