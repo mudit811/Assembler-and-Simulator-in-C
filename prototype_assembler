@@ -258,7 +258,7 @@ def func_call(s):
     x=func_dic[t](s)
     return(x)
 
-f=open("sample.txt","r")
+f=open("stdin.txt","r")
 data=f.readlines()
 f.close()
 for i in range(len(data)):
