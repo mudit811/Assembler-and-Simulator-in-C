@@ -1,0 +1,17 @@
+var input
+var var2
+var var3
+
+ld R1 input
+mov R2 $1
+mov R3 $0
+mov R4 $1
+
+Loop: mul R4 R4 R1
+   sub R1 R1 R2
+   cmp R1 R3
+   je Loop_exit
+   jmp Loop
+
+Loop_exit: st R4 var2
+           hlt
