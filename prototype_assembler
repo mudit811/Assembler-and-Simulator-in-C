@@ -174,8 +174,8 @@ def imm_misuse(data):
 def memory_overflow(data):
     if len(data)>128:
         return False
-    else:
         f.write("Memory limit exceeded")
+    else:
         return True
 
 def ERRORS(data):
