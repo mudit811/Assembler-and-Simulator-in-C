@@ -185,7 +185,23 @@ def imm_misuse(data):
             if flag == False:
                 break
     return flag
+def var_already_dec(data):
+    vd=[]
+    for i in range(len(data)):
+        if data[i][0]=='var':
+            if data[i][1] not in vd:
+                vd.append(data[i][1])
+            else:
+                f.write(f"variable {data[i][0]} already defined. Error at line {i}")
+                return False
+    return True
 
+def label_already_dec(label_freq,label_dic):
+    for i in label_freq:
+        if label_freq[i]!=1:
+            f.write(f"Used {i} label more than once. Error at line {int(label_dic[i],2)+len(var_dic)}")
+            return False
+    return True
 def correct_instruction_length(data):
     flag = True
  
@@ -236,6 +252,10 @@ def ERRORS(data):
         isErrorfree =False
     elif typo_reg(data) == False:
         isErrorfree = False
+    elif var_already_dec(data) == False:
+        isErrorfree=False
+    elif label_already_dec(label_freq,label_dic)==False:
+        isErrorfree=False
     elif hlt_not_found(data) == False:
         isErrorfree = False
     elif hlt_end(data) == False:
@@ -403,18 +423,19 @@ for i in data:
 
 
 label_dic = {}  # storing labels in the dictionary
+label_freq={}
 count_ = 0
 for i in range(len(data)):
     if data[i][0][-1] == ":":
         t = bin(count_)[2:]
         t = "0" * (7 - len(t)) + t
+        if data[i][0][:-1] not in label_freq:
+            label_freq[data[i][0][:-1]] = 0
+        label_freq[data[i][0][:-1]] +=1
         label_dic[data[i][0][:-1]] = t
         count_ += 1
     elif data[i][0] != "var":
-        count_ += 1
-for i in range(len(data)):
-    if data[i][0][-1] == ":":
-        data[i] = data[i][1:]
+        count_ += 1
 
 
 f = open("stdout.txt", "w")
