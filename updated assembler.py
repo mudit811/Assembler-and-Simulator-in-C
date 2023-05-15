@@ -263,7 +263,6 @@ ins = {
     "add" : "00000",
     "sub" : "00001",
     "mov" : "00010",
-    "mov_": "00011",
     "ld"  : "00100",
     "st"  : "00101",
     "mul" : "00110",
@@ -324,7 +323,6 @@ def convert_A(s):
     x = f"{ins[s[0]]}00{reg[s[1]]}{reg[s[2]]}{reg[s[3]]}"
     return x
 
-
 def convert_B(s):
     global reg
     global ins
@@ -335,13 +333,11 @@ def convert_B(s):
         x = f"{ins[s[0]]}0{reg[s[1]]}{imm}"
         return x
 
-
 def convert_C(s):
     global reg
     global ins
     x = f"{ins[s[0]]}00000{reg[s[1]]}{reg[s[2]]}"
     return x
-
 
 def convert_D(s):
     global reg
@@ -350,7 +346,6 @@ def convert_D(s):
     x = f"{ins[s[0]]}0{reg[s[1]]}{var_dic[s[2]]}"
     return x
 
-
 def convert_E(s):
     global reg
     global ins
@@ -358,12 +353,10 @@ def convert_E(s):
     x = f"{ins[s[0]]}0000{label_dic[s[1]]}"
     return x
 
-
 def convert_F(s):
     global ins
     x = f"{ins[s[0]]}00000000000"
     return x
-
 
 func_dic = {
     1: convert_A,
@@ -373,6 +366,7 @@ func_dic = {
     5: convert_E,
     6: convert_F,
 }
+
 
 def func_call(s):
     t = ins_type[s[0]]
@@ -385,7 +379,6 @@ def func_call(s):
     x = func_dic[t](s)
     ins["mov"]="00010"
     return x
-
 
 f = open("sample.txt", "r")
 data = f.readlines()
