@@ -201,7 +201,7 @@ def label_already_dec(label_freq,label_dic):
         if label_freq[i]!=1:
             f.write(f"Used {i} label more than once. Error at line {int(label_dic[i],2)+len(var_dic)}")
             return False
-    return True
+    return True
 def correct_instruction_length(data):
     flag = True
  
@@ -235,6 +235,11 @@ def correct_instruction_length(data):
         elif ins_type[data[i][0]] == 6:
             if len(data[i]) != 1:
                 num=1
+                flag = False
+                break
+        elif ins_type[data[i][0]] ==7:
+            if len(data[i]) != 3:
+                num=3
                 flag = False
                 break
     if flag:
@@ -400,7 +405,7 @@ def func_call(s):
     ins["mov"]="00010"
     return x
 
-f = open("sample.txt", "r")
+f = open("stdin.txt", "r")
 data = f.readlines()
 f.close()
 for i in range(len(data)):
@@ -435,11 +440,10 @@ for i in range(len(data)):
         label_dic[data[i][0][:-1]] = t
         count_ += 1
     elif data[i][0] != "var":
-        count_ += 1
+        count_+=1
 for i in range(len(data)):
     if data[i][0][-1] == ":":
         data[i] = data[i][1:]
-
 
 f = open("stdout.txt", "w")
 if ERRORS(data):
