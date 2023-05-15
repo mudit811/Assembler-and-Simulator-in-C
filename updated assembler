@@ -186,34 +186,6 @@ def imm_misuse(data):
                 break
     return flag
 
-def var_already_declared(data):
-    for i in range(len(data)):
-        if data[i][0] == "var":
-            t = bin(count_)[2:]
-            t = "0" * (7 - len(t)) + t
-            if data[i][1] not in var_dic:
-               var_dic[data[i][1]] = t
-            else:
-                f.write(f"Variable {data[i][i]} already defined. Error at line {i}")
-                return False
-    return True
-
-def label_already_used(data):
-    global count_
-    for i in range(len(data)):
-      if data[i][0][-1] == ":":
-        t = bin(count_)[2:]
-        t = "0" * (7 - len(t)) + t
-        if data[i][0][:-1] not in label_dic:
-            label_dic[data[i][0][:-1]] = t
-            count_ += 1
-        else:
-            f.write(f"Label {data[i][0][:-1]} already defined. Error at line {i}")
-            return False
-      elif data[i][0] != "var":
-            count_ += 1
-    return True
-
 def correct_instruction_length(data):
     flag = True
  
@@ -262,16 +234,14 @@ def ERRORS(data):
         isErrorfree = False
     elif correct_instruction_length(data)==False:
         isErrorfree =False
-    elif imm_misuse(data) == False:
-        isErrorfree = False
     elif typo_reg(data) == False:
         isErrorfree = False
     elif hlt_not_found(data) == False:
         isErrorfree = False
     elif hlt_end(data) == False:
         isErrorfree = False
-    elif var_already_declared(data)==False:
-        isErrorfree=False   
+    elif imm_misuse(data) == False:
+        isErrorfree = False
     elif var_found_in_btw_error(data) == False:
         isErrorfree = False
     elif undefined_label(data) == False:
@@ -284,6 +254,8 @@ def ERRORS(data):
         isErrorfree = False
     elif immediate(data) == False:
         isErrorfree = False
+    
+
     return isErrorfree
 
 
@@ -322,8 +294,7 @@ reg = {
 ins_type = {
     "add": 1,
     "sub": 1,
-    "mov": 2,
-    "mov_": 3,
+    "mov": 7,
     "ld": 4,
     "st": 4,
     "mul": 1,
@@ -358,7 +329,7 @@ def convert_B(s):
     global reg
     global ins
     global imm_ovrflw_error
-    imm = (str(bin(int(s[2].strip("$"))))).strip("0b")
+    imm = (str(bin(int(s[2].strip("$"))))).lstrip("0b")
     if len(imm) < 8:
         imm = "0" * (7 - len(imm)) + imm
         x = f"{ins[s[0]]}0{reg[s[1]]}{imm}"
@@ -403,10 +374,16 @@ func_dic = {
     6: convert_F,
 }
 
-
 def func_call(s):
     t = ins_type[s[0]]
+    if (t==7):
+        if s[2][0]=="$":
+            t=2
+        else:
+            t=3
+            ins["mov"]="00011"
     x = func_dic[t](s)
+    ins["mov"]="00010"
     return x
 
 
@@ -416,27 +393,32 @@ f.close()
 for i in range(len(data)):
     data[i] = data[i].strip()
 
-data = [i.split(" ") for i in data if i != "" and i != "\n"]
-
-print(data)
+data = [i.split() for i in data if i != "" and i != "\n"]
 
 var_dic = {}
 count_ = 0
 for i in data:
     if i[0] != "var":
         count_ += 1
-var_already_declared(data)
+for i in data:
+    if i[0] == "var":
+        t = bin(count_)[2:]
+        t = "0" * (7 - len(t)) + t
+        var_dic[i[1]] = t
+        count_ += 1
 
-
-print(var_dic)
 
 
 label_dic = {}  # storing labels in the dictionary
 count_ = 0
-label_already_used(data)
-
-print(label_dic)
-
+for i in range(len(data)):
+    if data[i][0][-1] == ":":
+        t = bin(count_)[2:]
+        t = "0" * (7 - len(t)) + t
+        label_dic[data[i][0][:-1]] = t
+        count_ += 1
+    elif data[i][0] != "var":
+        count_ += 1
 for i in range(len(data)):
     if data[i][0][-1] == ":":
         data[i] = data[i][1:]
@@ -444,7 +426,10 @@ for i in range(len(data)):
 
 f = open("stdout.txt", "w")
 if ERRORS(data):
-    for i in data:
-        if i[0] != "var":
-            x = func_call(i)
-            f.write(x + "\n")
+    for i in range(len(data)):
+        if data[i][0] != "var":
+            x = func_call(data[i])
+            if i!=len(data)-1:
+                f.write(x + "\n")
+            else:
+                f.write(x)
