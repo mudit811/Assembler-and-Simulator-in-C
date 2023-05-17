@@ -6,4 +6,4 @@ Nishchaya Roy
 Shashwat Shekhar
 Shaurya Parashar
 
-Updated assembler is the final assembler program with test cases and errors handled.
+assembler.py is the final assembler program with test cases and errors handled.
