@@ -1,3 +1,4 @@
+import sys
 from sys import exit
 
 
@@ -13,9 +14,8 @@ def typo_opcode(data):
     if flag:
         return True
     else:
-        f.write(f"Syntax Error: Operation code not correct; Error at line: {line}\n")
+        sys.stdout.write(f"Syntax Error: Operation code not correct; Error at line: {line}\n")
         return False
-
 
 def typo_reg(data):
     flag = True
@@ -48,7 +48,7 @@ def typo_reg(data):
     if flag:
         return True
     else:
-        f.write(f"Syntax Error: Register name not correct: Error at line {i}\n")
+        sys.stdout.write(f"Syntax Error: Register name not correct: Error at line {i}\n")
         return False
 
 
@@ -56,7 +56,7 @@ def hlt_end(data):
     if data[-1][-1] == "hlt":
         return True
     else:
-        f.write(f"hlt not found at the end\n")
+        sys.stdout.write(f"hlt not found at the end\n")
         return False
 
 
@@ -71,7 +71,7 @@ def hlt_not_found(data):
         return True
 
     else:
-        f.write(f"No halt instruction found\n")
+        sys.stdout.write(f"No halt instruction found\n")
         return False
 
 
@@ -90,7 +90,7 @@ def immediate(data):
     if flag:
         return True
     else:
-        f.write(f"Error at line {i} :Immediate value greater than 7 bit\n")
+        sys.stdout.write(f"Error at line {i} :Immediate value greater than 7 bit\n")
         return False
 
 
@@ -108,7 +108,7 @@ def var_found_in_btw_error(data):
     if flag:
         return flag
     else:
-        f.write(f"Variable found in between:Error at line {i}\n")
+        sys.stdout.write(f"Variable found in between:Error at line {i}\n")
         return flag
 
 
@@ -125,7 +125,7 @@ def undefined_label(data):
     if flag:
         return True
     else:
-        f.write(f"Undefined label {undec}: Error at line {i}\n")
+        sys.stdout.write(f"Undefined label {undec}: Error at line {i}\n")
         return False
 
 
@@ -142,7 +142,7 @@ def undefined_variable(data):
     if flag:
         return True
     else:
-        f.write(f"Undefined variable {undec}: Error at line {i}\n")
+        sys.stdout.write(f"Undefined variable {undec}: Error at line {i}\n")
         return False
 
 
@@ -151,11 +151,11 @@ def misuse_labels_n_var(data):
     for i in range(len(data)):
         if data[i][0] in jump_lst and data[i][1] in var_dic:
             flag = False
-            f.write(f"Using variable instead of label: Error at line: {i}\n")
+            sys.stdout.write(f"Using variable instead of label: Error at line: {i}\n")
 
         if data[i][0] in ["ld", "st"] and data[i][2] in label_dic:
             flag = False
-            f.write(f"Using label instead of variable: Error at line: {i}\n")
+            sys.stdout.write(f"Using label instead of variable: Error at line: {i}\n")
     return flag
 
 
@@ -164,7 +164,7 @@ def flag_reg_misuse(data):
     for i in range(len(data)):
         if data[i][0] != "mov" and "FLAGS" in data[i]:
             flag = False
-            f.write(
+            sys.stdout.write(
                 f"{data[i][0]} operation cannot have FLAGS in the instruction: Error at line {i}\n"
             )
             break
@@ -178,7 +178,7 @@ def imm_misuse(data):
             for j in range(len(data[i])):
                 if data[i][j][0] == "$":
                     flag = False
-                    f.write(
+                    sys.stdout.write(
                         f"{data[i][0]} operation cannot have immediate value in the instruction: Error at line {i}\n"
                     )
                     break
@@ -192,14 +192,14 @@ def var_already_dec(data):
             if data[i][1] not in vd:
                 vd.append(data[i][1])
             else:
-                f.write(f"variable {data[i][0]} already defined. Error at line {i}")
+                sys.stdout.write(f"variable {data[i][0]} already defined. Error at line {i}")
                 return False
     return True
 
 def label_already_dec(label_freq,label_dic):
     for i in label_freq:
         if label_freq[i]!=1:
-            f.write(f"Used {i} label more than once. Error at line {int(label_dic[i],2)+len(var_dic)}")
+            sys.stdout.write(f"Used {i} label more than once. Error at line {int(label_dic[i],2)+len(var_dic)}")
             return False
     return True
 def correct_instruction_length(data):
@@ -245,7 +245,7 @@ def correct_instruction_length(data):
     if flag:
         return True
     else:
-        f.write(f"General Synatx Error-{data[i][0]} operation expects {num-1} arguments after opcode: Error at line {i}\n")
+        sys.stdout.write(f"General Synatx Error-{data[i][0]} operation expects {num-1} arguments after opcode: Error at line {i}\n")
         return False
 
 def ERRORS(data):
@@ -405,9 +405,7 @@ def func_call(s):
     ins["mov"]="00010"
     return x
 
-f = open("stdin.txt", "r")
-data = f.readlines()
-f.close()
+data = sys.stdin.readlines()
 for i in range(len(data)):
     data[i] = data[i].strip()
 
@@ -445,12 +443,12 @@ for i in range(len(data)):
     if data[i][0][-1] == ":":
         data[i] = data[i][1:]
 
-f = open("stdout.txt", "w")
+#f = open("stdout.txt", "w")
 if ERRORS(data):
     for i in range(len(data)):
         if data[i][0] != "var":
             x = func_call(data[i])
             if i!=len(data)-1:
-                f.write(x + "\n")
+                sys.stdout.write(x + "\n")
             else:
-                f.write(x)
+                sys.stdout.write(x)
