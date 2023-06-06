@@ -99,9 +99,13 @@ def mov(s):
 
 def mov_(s):
     global reg_dic
-    dr = f"R{int(s[10:13],2)}"
-    sr = f"R{int(s[13:16],2)}"
-    reg_dic[dr] = reg_dic[sr]
+    dr=f"R{int(s[10:13],2)}"
+    sr=f"R{int(s[13:16],2)}"
+    if (sr=="R7"):
+        sr="FLAGS"
+        reg_dic[dr]=int(reg_dic[sr], 2)
+    else:
+        reg_dic[dr]=reg_dic[sr]
 
 
 def divide(s):
