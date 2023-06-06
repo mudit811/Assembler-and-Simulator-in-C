@@ -1,93 +1,174 @@
-reg={"R0":"000","R1":"001","R2":"010","R3":"011","R4":"100","R5":"101","R6":"110","FLAGS":"111"}
-ins={"add":"0000","sub":"0001"}
-ins_type={"add":1,"sub":1,"mov":2,"mov_":3,"ld":4,"st":4,"mul":1,"div":3,"rs":2,"ls":2,"xor":1,"or":1,"and":1,"not":3,"cmp":3,"jmp":5,"jlt":5,"jgt":5,"je":5,"hlt":6}
-var_dic={}
-label_dic={}
-var_dec_perm, var_dec_error, input_ovrflw_error, imm_ovrflw_error = 1,0,0,0
+fin=open("stdin.txt", "r")
+bin_in=fin.readlines()
+for i in range(len(bin_in)):
+    if i!=len(bin_in)-1:
+        bin_in[i]=bin_in[:-1]
+reg_dic={"R0":0,"R1":0,"R2":0,"R3":0,"R4":0,"R5":0,"R6":0,"FLAGS":"0000000000000000"}
+mem=["0000000000000000"]*128
+pc=0
+ins = {
+    "add" : "00000",
+    "sub" : "00001",
+    "mov" : "00010",
+    "ld"  : "00100",
+    "st"  : "00101",
+    "mul" : "00110",
+    "div" : "00111",
+    "rs"  : "01000",
+    "ls"  : "01001",
+    "xor" : "01010",
+    "or"  : "01011",
+    "and" : "01100",
+    "not" : "01101",
+    "cmp" : "01110",
+    "jmp" : "01111",
+    "jlt" : "11100",
+    "jgt" : "11101",
+    "je"  : "11111",
+    "hlt" : "11010",
+}
+binary_ins={}
+for i in ins:
+    binary_ins[ins[i]]=i
+#op functions
+def add(s):
+    global reg_dic
+    dr=f"R{int(s[7:10])}"
+    sr1=f"R{int(s[10:13])}"
+    sr2=f"R{int(s[13:16])}"
+    reg_dic[dr]=reg_dic[sr1]+reg_dic[sr2]
 
+def sub(s):
+    global reg_dic
+    dr=f"R{int(s[7:10])}"
+    sr1=f"R{int(s[10:13])}"
+    sr2=f"R{int(s[13:16])}"
+    reg_dic[dr]=reg_dic[sr1]-reg_dic[sr2]
 
+def mul(s):
+    global reg_dic
+    dr=f"R{int(s[7:10])}"
+    sr1=f"R{int(s[10:13])}"
+    sr2=f"R{int(s[13:16])}"
+    reg_dic[dr]=reg_dic[sr1]*reg_dic[sr2]
 
-def convert_A(s):
-   global reg
-   global ins
-   x= f"{ins[s[0]]}00{reg[s[1]]}{reg[s[2]]}{reg[s[3]]}"
-   return(x)
+def xor(s):
+    global reg_dic
+    dr=f"R{int(s[7:10])}"
+    sr1=f"R{int(s[10:13])}"
+    sr2=f"R{int(s[13:16])}"
+    reg_dic[dr]=reg_dic[sr1]^reg_dic[sr2]
 
-def convert_B(s):
-    global reg
-    global ins
-    global imm_ovrflw_error
-    imm=(str(bin(int(s[2].strip("$"))))).strip("0b")
-    if len(imm)<8:
-        imm="0"*(7-len(imm))+imm
-        x=f"{ins[s[0]]}0{reg[s[1]]}{imm}"
-        return(x)
+def orfunc(s):
+    global reg_dic
+    dr=f"R{int(s[7:10])}"
+    sr1=f"R{int(s[10:13])}"
+    sr2=f"R{int(s[13:16])}"
+    reg_dic[dr]=reg_dic[sr1] | reg_dic[sr2]
+
+def andfunc(s):
+    global reg_dic
+    dr=f"R{int(s[7:10])}"
+    sr1=f"R{int(s[10:13])}"
+    sr2=f"R{int(s[13:16])}"
+    reg_dic[dr]=reg_dic[sr1] & reg_dic[sr2]
+
+def mov(s):
+    global reg_dic
+    dr=f"R{int(s[6:9])}"
+    imm= int(s[9:16], 2)
+    reg_dic[dr]=imm
+
+def mov_(s):
+    global reg_dic
+    dr=f"R{int(s[10:13])}"
+    sr=f"R{int(s[13:16])}"
+    reg_dic[dr]=reg_dic[sr]
+
+def divide(s):
+    global reg_dic
+    sr1=f"R{int(s[10:13])}"
+    sr2=f"R{int(s[13:16])}"
+    if (reg_dic[sr2]==0):
+        reg_dic["FLAGS"]=list(reg_dic["FLAGS"])
+        reg_dic["FLAGS"][-4]="1"
+        reg_dic["FLAGS"]="".join(reg_dic["FLAGS"])
+        reg_dic["R0"]=0
+        reg_dic["R1"]=0
     else:
-        imm_ovrflw_error=1
-        return("Overflow Error: Imm Value Exceeds 7 bits")
+        q=reg_dic[sr1]//reg_dic[sr2]
+        r=reg_dic[sr1]%reg_dic[sr2]
+        reg_dic["R0"]=q
+        reg_dic["R1"]=r
 
-def convert_C(s):
-    global reg
-    global ins
-    x= f"{ins[s[0]]}00000{reg[s[1]]}{reg[s[2]]}"
-    return(x)
+def notfunc(s):
+    global reg_dic
+    dr=f"R{int(s[10:13])}"
+    sr=f"R{int(s[13:16])}"
+    reg_dic[dr]=~reg_dic[sr]
 
-def convert_D(s):  
-    global reg
-    global ins
-    global var_dic
-    x=f"{ins[s[0]]}0{reg[s[1]]}{var_dic[s[2]]}"
-    return(x)
-    
+def cmp(s):
+    global reg_dic
+    sr1=f"R{int(s[10:13])}"
+    sr2=f"R{int(s[13:16])}"
+    if (reg_dic[sr1]>reg_dic[sr2]):
+        x=2
+    elif (reg_dic[sr1]<reg_dic[sr2]):
+        x=3
+    elif (reg_dic[sr1]==reg_dic[sr2]):
+        x=1
+    reg_dic["FLAGS"]=list(reg_dic["FLAGS"])
+    reg_dic["FLAGS"][-x]="1"
+    reg_dic["FLAGS"]="".join(reg_dic["FLAGS"])
 
-def convert_E(s):   
-    global reg
-    global ins
-    global label_dic
-    x=f"{ins[s[0]]}0000{label_dic[s[1]]}"
-    return(x)
+def st(s):
+    global reg_dic
+    sr=f"R{int(s[6:9])}"
+    i=f"R{int(s[9:16])}"
+    i=int(i, 2)
+    val=reg_dic[sr]
+    val=bin(val)[2:]
+    val=val.zfill(16)
+    mem[i]=val
 
-def convert_F(s):
-    global ins
-    x=f"{ins[s[0]]}00000000000"
-    return(x)
-func_dic={1: convert_A, 2: convert_B, 3: convert_C, 4: convert_D, 5: convert_E, 6: convert_F}
-def func_call(s):
-    t=ins_type[s[0]]
-    x=func_dic[t](s)
-    return(x)
+def ld(s):
+    global reg_dic
+    dr=f"R{int(s[6:9])}"
+    i=f"R{int(s[9:16])}"
+    i=int(i, 2)
+    val=mem[i]
+    val=int(val, 2)
+    reg_dic[dr]=val
 
-stdin=open("stdin.txt", "r")
-ass_int=stdin.readlines()
-var_lst=[]
-num_int=len(ass_int)
-i=0
+def jmp(s):
+    global reg_dic, pc
+    i=f"R{int(s[9:16])}"
+    i=int(i, 2)
+    pc=i
 
-if num_int>128:
-    intovrflw_error=1
+def jlt(s):
+    global reg_dic, pc
+    if (reg_dic["FLAGS"][13]==1):
+        i=f"R{int(s[9:16])}"
+        i=int(i, 2)
+        pc=i
 
-while i<num_int:
-    if ass_int[i]=='\n':
-        x=ass_int.pop(i)
-        num_int-=1
-    else:
-        ass_int[i]=ass_int[i].strip("\n")
-        ass_int[i]=ass_int[i].split()
-        if ass_int[i][0]=="var":
-            if var_dec_perm==0:
-                print("Variable Declaration error")
-                var_dec_error=0
-                break
-            else:
-                x=ass_int.pop(i)
-                var_lst.append(x)
-                i-=1
-                num_int-=1
-        else:
-            var_dec_perm=0
-        i+=1
+def jgt(s):
+    global reg_dic, pc
+    if (reg_dic["FLAGS"][14]==1):
+        i=f"R{int(s[9:16])}"
+        i=int(i, 2)
+        pc=i
+
+def je(s):
+    global reg_dic, pc
+    if (reg_dic["FLAGS"][15]==1):
+        i=f"R{int(s[9:16])}"
+        i=int(i, 2)
+        pc=i
 
 
-print(ass_int)
-print(var_lst)
-print(num_int)
+for i in range(len(bin_in)):
+    mem[i]=bin_in[i]
+while(pc<128 and pc<len(bin_in)):
+    opcode=mem[pc][:5]
