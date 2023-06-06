@@ -283,7 +283,6 @@ def memory_dump(mem):
 for i in range(len(bin_in)):
     mem[i] = bin_in[i]
 f=open("stdout.txt","w")
-print (len(bin_in))
 while pc < 128 and pc < len(bin_in):
     pc_orginal=pc
     opcode = mem[pc][:5]
