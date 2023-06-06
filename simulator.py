@@ -2,11 +2,34 @@ fin=open("stdin.txt", "r")
 bin_in=fin.readlines()
 for i in range(len(bin_in)):
     if i!=len(bin_in)-1:
-        bin_in[i]=bin_in[:-1]
+        bin_in[i]=bin_in[i][:-1]
 reg_dic={"R0":0,"R1":0,"R2":0,"R3":0,"R4":0,"R5":0,"R6":0,"FLAGS":"0000000000000000"}
 mem=["0000000000000000"]*128
 pc=0
-
+ins = {
+    "add" : "00000",
+    "sub" : "00001",
+    "mov" : "00010",
+    "ld"  : "00100",
+    "st"  : "00101",
+    "mul" : "00110",
+    "div" : "00111",
+    "rs"  : "01000",
+    "ls"  : "01001",
+    "xor" : "01010",
+    "or"  : "01011",
+    "and" : "01100",
+    "not" : "01101",
+    "cmp" : "01110",
+    "jmp" : "01111",
+    "jlt" : "11100",
+    "jgt" : "11101",
+    "je"  : "11111",
+    "hlt" : "11010",
+}
+binary_ins={}
+for i in ins:
+    binary_ins[ins[i]]=i
 #op functions
 def add(s):
     global reg_dic
@@ -149,3 +172,4 @@ for i in range(len(bin_in)):
     mem[i]=bin_in[i]
 while(pc<128 and pc<len(bin_in)):
     opcode=mem[pc][:5]
+count_=0
