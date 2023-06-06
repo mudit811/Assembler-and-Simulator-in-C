@@ -174,25 +174,22 @@ def jmp(s):
 
 def jlt(s):
     global reg_dic, pc
-    if reg_dic["FLAGS"][13] == 1:
-        i = f"R{int(s[9:16],2)}"
-        i = int(i, 2)
+    if reg_dic["FLAGS"][13] == "1":
+        i = int(s[9:16],2)
         pc = i
 
 
 def jgt(s):
     global reg_dic, pc
-    if reg_dic["FLAGS"][14] == 1:
-        i = f"R{int(s[9:16],2)}"
-        i = int(i, 2)
+    if reg_dic["FLAGS"][14] == "1":
+        i = int(s[9:16],2)
         pc = i
 
 
 def je(s):
     global reg_dic, pc
-    if reg_dic["FLAGS"][15] == 1:
-        i = f"R{int(s[9:16],2)}"
-        i = int(i, 2)
+    if reg_dic["FLAGS"][15] == "1":
+        i = int(s[9:16],2)
         pc = i
 
 def ls(s):
@@ -262,15 +259,18 @@ def rf_dump(reg,f):
     r6=bin(reg["R6"])[2:].zfill(16)
     flag=reg["FLAGS"]
     f.write(f"{r0} {r1} {r2} {r3} {r4} {r5} {r6} {flag}\n")
+
 def memory_dump(mem):
     for i in range(len(mem)):
         f.write(f"{mem[i]}")
         if (i!=len(mem)-1):
             f.write("\n")
+
 for i in range(len(bin_in)):
     mem[i] = bin_in[i]
+
 f=open("stdout.txt","w")
-print (len(bin_in))
+
 while pc < 128 and pc < len(bin_in):
     pc_orginal=pc
     opcode = mem[pc][:5]
