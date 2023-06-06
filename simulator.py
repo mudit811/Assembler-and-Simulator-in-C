@@ -2,7 +2,7 @@ fin=open("stdin.txt", "r")
 bin_in=fin.readlines()
 for i in range(len(bin_in)):
     if i!=len(bin_in)-1:
-        bin_in[i]=bin_in[i][:-2]
+        bin_in[i]=bin_in[i][:-1]
 reg_dic={"R0":0,"R1":0,"R2":0,"R3":0,"R4":0,"R5":0,"R6":0,"FLAGS":"0000000000000000"}
 mem=["0000000000000000"]*128
 pc=0
