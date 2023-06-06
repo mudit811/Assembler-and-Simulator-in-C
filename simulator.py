@@ -1,7 +1,7 @@
-fin = open("stdin.txt", "r")
+fin = open("hard/test5", "r")
 bin_in = fin.readlines()
 for i in range(len(bin_in)):
-    if i != len(bin_in) - 1:
+    #if i != len(bin_in) - 1:
         bin_in[i] = bin_in[i][:-1]
 reg_dic = {
     "R0": 0,
@@ -150,8 +150,7 @@ def cmp(s):
 def st(s):
     global reg_dic
     sr = f"R{int(s[6:9],2)}"
-    i = f"R{int(s[9:16],2)}"
-    i = int(i, 2)
+    i = int(s[9:16],2)
     val = reg_dic[sr]
     val = bin(val)[2:]
     val = val.zfill(16)
@@ -161,8 +160,7 @@ def st(s):
 def ld(s):
     global reg_dic
     dr = f"R{int(s[6:9],2)}"
-    i = f"R{int(s[9:16],2)}"
-    i = int(i, 2)
+    i = int(s[9:16],2)
     val = mem[i]
     val = int(val, 2)
     reg_dic[dr] = val
@@ -170,8 +168,7 @@ def ld(s):
 
 def jmp(s):
     global reg_dic, pc
-    i = f"R{int(s[9:16],2)}"
-    i = int(i, 2)
+    i = int(s[9:16],2)
     pc = i
 
 
@@ -197,6 +194,7 @@ def je(s):
         i = f"R{int(s[9:16],2)}"
         i = int(i, 2)
         pc = i
+
 def ls(s):
     global reg_dic,pc
     dr = f"R{int(s[6:9],2)}"
@@ -209,6 +207,7 @@ def ls(s):
             b_ret[i] = b_val[i + imm]
     b_ret="".join(b_ret)
     reg_dic[dr] = int(b_ret,2)
+
 def rs(s):
     global reg_dic,pc
     dr = f"R{int(s[6:9],2)}"
@@ -264,12 +263,14 @@ def rf_dump(reg,f):
     flag=reg["FLAGS"]
     f.write(f"{r0} {r1} {r2} {r3} {r4} {r5} {r6} {flag}\n")
 def memory_dump(mem):
-    for i in mem:
-        f.write(f"{i}\n")
+    for i in range(len(mem)):
+        f.write(f"{mem[i]}")
+        if (i!=len(mem)-1):
+            f.write("\n")
 for i in range(len(bin_in)):
     mem[i] = bin_in[i]
 f=open("stdout.txt","w")
-
+print (len(bin_in))
 while pc < 128 and pc < len(bin_in):
     pc_orginal=pc
     opcode = mem[pc][:5]
