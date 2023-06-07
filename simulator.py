@@ -3,7 +3,8 @@ import sys
 bin_in = sys.stdin.readlines()
 for i in range(len(bin_in)):
     #if i != len(bin_in) - 1:
-        bin_in[i] = bin_in[i][:-1]
+    if "\n" in bin_in[i]:
+            bin_in[i] = bin_in[i][:-1]
 reg_dic = {
     "R0": 0,
     "R1": 0,
