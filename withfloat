@@ -391,14 +391,16 @@ def convert_A(s):
     return x
 
 def newconvert_B(s):
+    def newconvert_B(s):
     global reg
     global ins
     global imm_ovrflw_error
-    imm = (str(bin(int(s[2].strip("$"))))).strip("0b")
-    if len(imm) < 8:
-        imm = "0" * (7 - len(imm)) + imm
-        x = f"{ins[s[0]]}0{reg[s[1]]}{imm}"
-        return x
+    imm = float((s[2].strip("$")))
+    if imm <=15.75 and imm>=0.25:
+        x=imm%(0.25)
+        if x<=0.125:imm-=x
+        else:imm-=x;imm+=0.25
+        return imm
 
 def convert_B(s):
     global reg
