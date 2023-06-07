@@ -72,7 +72,6 @@ def sub(s):
         reg_dic["FLAGS"]="".join(reg_dic["FLAGS"])
     else:
         reg_dic[dr]=reg_dic[sr1]-reg_dic[sr2]
-  
         reg_dic["FLAGS"]="0000000000000000"
 
 
@@ -97,8 +96,7 @@ def xor(s):
     sr1 = f"R{int(s[10:13],2)}"
     sr2 = f"R{int(s[13:16],2)}"
     reg_dic[dr] = reg_dic[sr1] ^ reg_dic[sr2]
-  
-    reg_dic["FLAGS"]="0000000000000000"
+    reg_dic["FLAGS"]="0000000000000000"    
 
 
 def orfunc(s):
@@ -135,7 +133,6 @@ def mov_(s):
         reg_dic[dr]=reg_dic[sr]
     reg_dic["FLAGS"]="0000000000000000"
 
-
 def divide(s):
     global reg_dic
     sr1 = f"R{int(s[10:13],2)}"
@@ -153,13 +150,11 @@ def divide(s):
         reg_dic["R1"] = r
         reg_dic["FLAGS"]="0000000000000000"
 
-
 def notfunc(s):
     global reg_dic
     dr = f"R{int(s[10:13],2)}"
     sr = f"R{int(s[13:16]),2}"
     reg_dic[dr] = ~reg_dic[sr]
-
     reg_dic["FLAGS"]="0000000000000000"
 
 def cmp(s):
@@ -175,7 +170,7 @@ def cmp(s):
     reg_dic["FLAGS"] = list(reg_dic["FLAGS"])
     reg_dic["FLAGS"][-x] = "1"
     reg_dic["FLAGS"] = "".join(reg_dic["FLAGS"])
-
+    #reg_dic["FLAGS"]="0000000000000000"
 
 def st(s):
     global reg_dic
@@ -254,7 +249,6 @@ def rs(s):
     reg_dic["FLAGS"]="0000000000000000"
 
 
-
 opc = {
     "00000": add,
     "00001": sub,
@@ -277,10 +271,10 @@ opc = {
     "11111": je,
     "11010": "hlt",
 }
-def pc_dump(pc,f):
+def pc_dump(pc):
     bin_pc=bin(pc)[2:].zfill(7)
     sys.stdout.write(bin_pc+"        ")
-def rf_dump(reg,f):
+def rf_dump(reg):
     r0=bin(reg["R0"])[2:].zfill(16)
     r1=bin(reg["R1"])[2:].zfill(16)
     r2=bin(reg["R2"])[2:].zfill(16)
