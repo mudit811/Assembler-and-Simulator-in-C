@@ -54,6 +54,8 @@ def add(s):
         reg_dic["FLAGS"][-4]="1"
         reg_dic["FLAGS"]="".join(reg_dic["FLAGS"])
         reg_dic[dr]=0
+    else:
+        reg_dic["FLAGS"]="0000000000000000"
 
 
 
@@ -70,6 +72,8 @@ def sub(s):
         reg_dic["FLAGS"]="".join(reg_dic["FLAGS"])
     else:
         reg_dic[dr]=reg_dic[sr1]-reg_dic[sr2]
+  
+        reg_dic["FLAGS"]="0000000000000000"
 
 
 def mul(s):
@@ -83,6 +87,8 @@ def mul(s):
         reg_dic["FLAGS"][-4]="1"
         reg_dic["FLAGS"]="".join(reg_dic["FLAGS"])
         reg_dic[dr]=0
+    else:
+        reg_dic["FLAGS"]="0000000000000000"
 
 
 def xor(s):
@@ -91,6 +97,8 @@ def xor(s):
     sr1 = f"R{int(s[10:13],2)}"
     sr2 = f"R{int(s[13:16],2)}"
     reg_dic[dr] = reg_dic[sr1] ^ reg_dic[sr2]
+  
+    reg_dic["FLAGS"]="0000000000000000"
 
 
 def orfunc(s):
@@ -99,7 +107,7 @@ def orfunc(s):
     sr1 = f"R{int(s[10:13],2)}"
     sr2 = f"R{int(s[13:16],2)}"
     reg_dic[dr] = reg_dic[sr1] | reg_dic[sr2]
-
+    reg_dic["FLAGS"]="0000000000000000"
 
 def andfunc(s):
     global reg_dic
@@ -107,14 +115,14 @@ def andfunc(s):
     sr1 = f"R{int(s[10:13],2)}"
     sr2 = f"R{int(s[13:16],2)}"
     reg_dic[dr] = reg_dic[sr1] & reg_dic[sr2]
-
+    reg_dic["FLAGS"]="0000000000000000"
 
 def mov(s):
     global reg_dic
     dr = f"R{int(s[6:9],2)}"
     imm = int(s[9:16], 2)
     reg_dic[dr] = imm
-
+    reg_dic["FLAGS"]="0000000000000000"
 
 def mov_(s):
     global reg_dic
@@ -125,6 +133,7 @@ def mov_(s):
         reg_dic[dr]=int(reg_dic[sr], 2)
     else:
         reg_dic[dr]=reg_dic[sr]
+    reg_dic["FLAGS"]="0000000000000000"
 
 
 def divide(s):
@@ -142,6 +151,7 @@ def divide(s):
         r = reg_dic[sr1] % reg_dic[sr2]
         reg_dic["R0"] = q
         reg_dic["R1"] = r
+        reg_dic["FLAGS"]="0000000000000000"
 
 
 def notfunc(s):
@@ -150,6 +160,7 @@ def notfunc(s):
     sr = f"R{int(s[13:16]),2}"
     reg_dic[dr] = ~reg_dic[sr]
 
+    reg_dic["FLAGS"]="0000000000000000"
 
 def cmp(s):
     global reg_dic
@@ -174,7 +185,7 @@ def st(s):
     val = bin(val)[2:]
     val = val.zfill(16)
     mem[i] = val
-
+    reg_dic["FLAGS"]="0000000000000000"
 
 def ld(s):
     global reg_dic
@@ -183,33 +194,34 @@ def ld(s):
     val = mem[i]
     val = int(val, 2)
     reg_dic[dr] = val
-
+    reg_dic["FLAGS"]="0000000000000000"
 
 def jmp(s):
     global reg_dic, pc
     i = int(s[9:16],2)
     pc = i
-
+    reg_dic["FLAGS"]="0000000000000000"
 
 def jlt(s):
     global reg_dic, pc
     if reg_dic["FLAGS"][13] == "1":
         i = int(s[9:16],2)
         pc = i
-
+    reg_dic["FLAGS"]="0000000000000000"
 
 def jgt(s):
     global reg_dic, pc
     if reg_dic["FLAGS"][14] == "1":
         i = int(s[9:16],2)
         pc = i
-
+    reg_dic["FLAGS"]="0000000000000000"
 
 def je(s):
     global reg_dic, pc
     if reg_dic["FLAGS"][15] == "1":
         i = int(s[9:16],2)
         pc = i
+    reg_dic["FLAGS"]="0000000000000000"
 
 def ls(s):
     global reg_dic,pc
@@ -223,6 +235,7 @@ def ls(s):
             b_ret[i] = b_val[i + imm]
     b_ret="".join(b_ret)
     reg_dic[dr] = int(b_ret,2)
+    reg_dic["FLAGS"]="0000000000000000"
 
 def rs(s):
     global reg_dic,pc
@@ -238,6 +251,7 @@ def rs(s):
             b_ret[i] = b_val[i-imm]
     b_ret="".join(b_ret)
     reg_dic[dr] = int(b_ret,2)
+    reg_dic["FLAGS"]="0000000000000000"
 
 
 
